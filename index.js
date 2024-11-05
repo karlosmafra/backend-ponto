@@ -3,12 +3,14 @@ const app = express()
 const PORT = 3000
 
 const sequelize = require('./config/db')
+const Usuario = require('./models/usuario')
+const Ponto = require('./models/ponto')
 
-sequelize.authenticate()
+sequelize.sync({alter: true})
 .then(() => {
-    console.log("Conexão sucesso!")
-}).catch(() => {
-    error = console.log("ERRO")
+    console.log("BD sincronizado")
+}).catch(error => {
+    console.log("ERRO") 
 })
 
 
