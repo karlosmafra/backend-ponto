@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const cors = require ('cors');
 const PORT = 3000
 
 const sequelize = require('./config/db')
@@ -13,21 +14,42 @@ sequelize.sync({alter: true})
     console.log("ERRO") 
 })
 
+app.use(cors());
+app.use(express.json());
 
 // ROTAS
 
+// Rota que retorna TODOS os usuários da aplicação
+app.get('/usuarios', async (req, res) => {    
+    const usuarios = await Usuario.findAll();
+    res.json(usuarios);
+});
+
+// Rota que busca um usuário específico 
+app.get('/usuario/:id_usuario', async (req, res) => {
+    const usuario = await Usuario.findAll({
+        where: {
+          id_usuario: req.params.id_usuario
+        },
+    });
+
+    res.json(usuario);
+});
+
+// Rota que cria um usuário
+app.post('/usuario', async (req, res) => {
+    const usuario = await Usuario.create({
+        nome: req.body.nome,
+        email: req.body.email,
+        login: req.body.login,
+        senha: req.body.senha,
+        permissao: req.body.permissao,
+    })
+    res.status(201).json(usuario)
+})
+
 app.get('/', (req, res) => {
     res.send("Chamada ao recurso realizada com sucesso")
-})
-
-// Retornar todos os usuários
-app.get('/users', (req, res) => {
-    res.send("Retornar todos os usuários")
-})
-
-// Retornar um usuário
-app.get('/user/:id', (req, res) => {
-    res.send(req.params.id)
 })
 
 app.post('/rotapost', (req, res) => {
