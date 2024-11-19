@@ -48,6 +48,29 @@ app.post('/usuario', async (req, res) => {
     res.status(201).json(usuario)
 })
 
+// Rota que deleta um usuário
+app.delete('/usuario/:id_usuario', async (req, res) => {
+    const id_usuario = req.params.id_usuario
+    const usuario = await Usuario.findByPk(id_usuario)
+    if (!usuario) {
+        return
+    }
+    await usuario.destroy()
+    res.send("Usuário deletado com sucesso")
+})
+
+// Editar usuário
+app.put('/usuario/:id_usuario', async (req, res) => {
+    const id_usuario = req.params.id_usuario
+    const {nome, email, login, senha, permissao} = req.body
+    const usuario = await Usuario.findByPk(id_usuario)
+    if (!usuario) {
+        return res.send("Erro ao editar usuário")
+    }
+    usuario.update({nome, email, login, senha, permissao})
+    res.send("Usuário atualizado com sucesso")
+})
+
 app.get('/', (req, res) => {
     res.send("Chamada ao recurso realizada com sucesso")
 })
