@@ -1,11 +1,14 @@
 const express = require('express')
 const app = express()
-const cors = require ('cors');
+const cors = require('cors');
 const PORT = 3000
 
 const sequelize = require('./config/db')
 const Usuario = require('./models/usuario')
 const Ponto = require('./models/ponto')
+
+const UsuarioRotas = require('./routes/usuario')
+const PontoRotas = require('./routes/ponto')
 
 sequelize.sync({alter: true})
 .then(() => {
@@ -14,70 +17,10 @@ sequelize.sync({alter: true})
     console.log("ERRO") 
 })
 
-app.use(cors());
-app.use(express.json());
-
-// ROTAS
-
-// Rota que retorna TODOS os usuários da aplicação
-app.get('/usuarios', async (req, res) => {    
-    const usuarios = await Usuario.findAll();
-    res.json(usuarios);
-});
-
-// Rota que busca um usuário específico 
-app.get('/usuario/:id_usuario', async (req, res) => {
-    const usuario = await Usuario.findAll({
-        where: {
-          id_usuario: req.params.id_usuario
-        },
-    });
-
-    res.json(usuario);
-});
-
-// Rota que cria um usuário
-app.post('/usuario', async (req, res) => {
-    const usuario = await Usuario.create({
-        nome: req.body.nome,
-        email: req.body.email,
-        login: req.body.login,
-        senha: req.body.senha,
-        permissao: req.body.permissao,
-    })
-    res.status(201).json(usuario)
-})
-
-// Rota que deleta um usuário
-app.delete('/usuario/:id_usuario', async (req, res) => {
-    const id_usuario = req.params.id_usuario
-    const usuario = await Usuario.findByPk(id_usuario)
-    if (!usuario) {
-        return
-    }
-    await usuario.destroy()
-    res.send("Usuário deletado com sucesso")
-})
-
-// Editar usuário
-app.put('/usuario/:id_usuario', async (req, res) => {
-    const id_usuario = req.params.id_usuario
-    const {nome, email, login, senha, permissao} = req.body
-    const usuario = await Usuario.findByPk(id_usuario)
-    if (!usuario) {
-        return res.send("Erro ao editar usuário")
-    }
-    usuario.update({nome, email, login, senha, permissao})
-    res.send("Usuário atualizado com sucesso")
-})
-
-app.get('/', (req, res) => {
-    res.send("Chamada ao recurso realizada com sucesso")
-})
-
-app.post('/rotapost', (req, res) => {
-    res.send("Chamada ao recurso com post realizada com sucesso")
-})
+app.use(cors())
+app.use(express.json())
+app.use('/', UsuarioRotas)
+app.use('/', PontoRotas)
 
 app.listen(PORT, () => {
     console.log("Servidor aguardando requisições")
