@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Ponto = require('../models/ponto')
+const { where } = require('sequelize')
 
 router.get('/pontos', async (req, res) => {    
     const pontos = await Ponto.findAll()
@@ -12,10 +13,18 @@ router.get('/ponto/:id_ponto', async (req, res) => {
     res.json(ponto);
 })
 
+router.get('/ponto/usuario/:id_usuario', async (req, res) => {
+    const pontos = await Ponto.findAll(
+        where({id_usuario: req.body.id_usuario})
+    )
+    res.json(pontos);
+})
+
 router.post('/ponto', async (req, res) => {
     const ponto = await Ponto.create({
         tipo: req.body.tipo,
-        dataHora: req.body.dataHora
+        dataHora: req.body.dataHora,
+        id_usuario: req.body.id_usuario
     })
 
     res.json(ponto)

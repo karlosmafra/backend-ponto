@@ -17,6 +17,14 @@ sequelize.sync({alter: true})
     console.log("ERRO") 
 })
 
+Usuario.hasMany(Ponto, {
+    foreignKey: "id_usuario"
+})
+
+Ponto.belongsTo(Usuario, {
+    foreignKey: "id_usuario"
+})
+
 app.use(cors())
 app.use(express.json())
 app.use('/', UsuarioRotas)

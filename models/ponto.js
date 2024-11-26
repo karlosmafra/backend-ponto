@@ -34,6 +34,11 @@ const Ponto = sequelize.define('Ponto', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    id_usuario: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        key: ""
+    }
 }, {
     timestamps: true
 } 
